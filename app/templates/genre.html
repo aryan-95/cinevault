@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "partials/_movie_card.html" import movie_card %}
+{% block title %}{{ genre_name }} Movies · {{ brand_name }}{% endblock %}
+
+{% block content %}
+<div class="cv-page-container">
+  <h1 class="cv-page-title">{{ genre_name }} Movies</h1>
+
+  <div class="cv-chip-row mb-4">
+    {% for g in genres %}
+    <a href="{{ url_for('main.genre', genre_name=g) }}" class="cv-chip {% if g == genre_name %}active{% endif %}">{{ g }}</a>
+    {% endfor %}
+  </div>
+
+  {% if movies %}
+  <div class="cv-grid">
+    {% for movie in movies %}{{ movie_card(movie) }}{% endfor %}
+  </div>
+  {% else %}
+  <div class="cv-empty-state">
+    <p>No {{ genre_name }} movies available yet.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

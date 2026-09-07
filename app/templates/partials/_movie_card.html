@@ -1,0 +1,26 @@
+{% macro movie_card(movie, progress_pct=None) %}
+<div class="cv-card" data-movie-id="{{ movie.id }}">
+  <a href="{{ url_for('movies.detail', movie_id=movie.id) }}" class="cv-card-link">
+    <div class="cv-card-poster-wrap">
+      <img src="{{ movie.poster_url or 'https://placehold.co/300x450/141414/e50914?text=' + movie.title }}"
+           alt="{{ movie.title }}" class="cv-card-poster" loading="lazy">
+      {% if progress_pct is not none %}
+      <div class="cv-progress-track"><div class="cv-progress-fill" style="width: {{ progress_pct }}%"></div></div>
+      {% endif %}
+      <div class="cv-card-overlay">
+        <span class="cv-play-icon">▶</span>
+      </div>
+    </div>
+    <div class="cv-card-meta">
+      <div class="cv-card-title">{{ movie.title }}</div>
+      <div class="cv-card-sub">
+        <span>{{ movie.release_year }}</span>
+        <span class="cv-dot">•</span>
+        <span>★ {{ movie.average_rating }}</span>
+        <span class="cv-dot">•</span>
+        <span>{{ movie.genre_list[0] if movie.genre_list else 'Movie' }}</span>
+      </div>
+    </div>
+  </a>
+</div>
+{% endmacro %}

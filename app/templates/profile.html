@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Profile · {{ brand_name }}{% endblock %}
+{% block content %}
+<div class="cv-page-container">
+  <h1 class="cv-page-title">My Profile</h1>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="cv-panel">
+        <h5 class="mb-3">Account Details</h5>
+        <form method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="update_profile">
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" name="username" class="form-control cv-input" value="{{ current_user.username }}">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control cv-input" value="{{ current_user.email }}">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <input type="text" class="form-control cv-input" value="{{ current_user.role.value }}" disabled>
+          </div>
+          <button type="submit" class="btn cv-btn-primary">Save Changes</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="cv-panel mb-4">
+        <h5 class="mb-3">Change Password</h5>
+        <form method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="change_password">
+          <div class="mb-3">
+            <label class="form-label">Current Password</label>
+            <input type="password" name="current_password" class="form-control cv-input" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">New Password</label>
+            <input type="password" name="new_password" class="form-control cv-input" required minlength="8">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" name="confirm_new_password" class="form-control cv-input" required minlength="8">
+          </div>
+          <button type="submit" class="btn cv-btn-secondary">Change Password</button>
+        </form>
+      </div>
+
+      <div class="cv-panel cv-panel-danger">
+        <h5 class="mb-3">Delete Account</h5>
+        <p class="text-muted small">This action is permanent and cannot be undone.</p>
+        <form method="post" onsubmit="return confirm('Are you sure you want to delete your account? This cannot be undone.');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="delete_account">
+          <button type="submit" class="btn btn-outline-danger">Delete My Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

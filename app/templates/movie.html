@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% from "partials/_movie_card.html" import movie_card %}
+{% block title %}{{ movie.title }} · {{ brand_name }}{% endblock %}
+
+{% block content %}
+<section class="cv-detail-hero" style="background-image: linear-gradient(180deg, rgba(10,10,15,0.3) 0%, rgba(10,10,15,0.98) 100%), url('{{ movie.backdrop_url or "https://placehold.co/1600x900/141414/e50914?text=" + movie.title }}');">
+  <div class="cv-detail-hero-inner">
+    <img class="cv-detail-poster" src="{{ movie.poster_url or 'https://placehold.co/300x450/141414/e50914?text=' + movie.title }}" alt="{{ movie.title }}">
+    <div class="cv-detail-info">
+      <h1 class="cv-detail-title">{{ movie.title }}</h1>
+      <div class="cv-hero-tags mb-3">
+        <span class="cv-badge">{{ movie.age_rating }}</span>
+        <span>{{ movie.release_year }}</span>
+        <span class="cv-dot">•</span>
+        <span>{{ movie.duration_display }}</span>
+        <span class="cv-dot">•</span>
+        <span>★ {{ movie.average_rating }} ({{ movie.rating_count }} ratings)</span>
+      </div>
+      <p class="cv-detail-desc">{{ movie.description }}</p>
+      <p class="small text-muted mb-1"><strong>Genres:</strong> {{ movie.genre_list | join(', ') }}</p>
+      <p class="small text-muted mb-1"><strong>Cast:</strong> {{ movie.cast }}</p>
+      <p class="small text-muted mb-3"><strong>Director:</strong> {{ movie.director }}</p>
+
+      <div class="cv-hero-actions">
+        <a href="{{ url_for('movies.watch', movie_id=movie.id) }}" class="btn cv-btn-primary btn-lg">▶ Watch Now</a>
+        {% if current_user.is_authenticated %}
+          {% if in_my_list %}
+          <form action="{{ url_for('movies.remove_from_list', movie_id=movie.id) }}" method="post" class="d-inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn cv-btn-secondary btn-lg">✓ In My List</button>
+          </form>
+          {% else %}
+          <form action="{{ url_for('movies.add_to_list', movie_id=movie.id) }}" method="post" class="d-inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn cv-btn-secondary btn-lg">+ My List</button>
+          </form>
+          {% endif %}
+        {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn cv-btn-secondary btn-lg">+ My List</a>
+        {% endif %}
+        {% if movie.trailer_url %}
+        <a href="{{ movie.trailer_url }}" target="_blank" rel="noopener" class="btn cv-btn-ghost btn-lg">Trailer</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cv-page-container">
+
+  <section class="mb-5">
+    <h3 class="mb-3">Ratings &amp; Reviews</h3>
+
+    {% if current_user.is_authenticated %}
+    <div class="cv-panel mb-4">
+      <form method="post" action="{{ url_for('movies.submit_review', movie_id=movie.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="form-label">{{ 'Update your rating' if user_review else 'Rate this movie' }}</label>
+        <div class="cv-star-rating mb-3">
+          {% for i in range(1,6) %}
+          <label>
+            <input type="radio" name="rating" value="{{ i }}" {% if user_review and user_review.rating == i %}checked{% endif %} required>
+            <span>★</span>
+          </label>
+          {% endfor %}
+        </div>
+        <textarea name="review_text" class="form-control cv-input mb-3" rows="3" placeholder="Write a review (optional)">{{ user_review.review_text if user_review else '' }}</textarea>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn cv-btn-primary">{{ 'Update Review' if user_review else 'Submit Review' }}</button>
+          {% if user_review %}
+          <form method="post" action="{{ url_for('movies.delete_review', movie_id=movie.id) }}" class="d-inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline-danger">Delete My Review</button>
+          </form>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+    {% endif %}
+
+    {% if reviews %}
+    <div class="cv-reviews-list">
+      {% for review in reviews %}
+      <div class="cv-review-item">
+        <div class="d-flex justify-content-between">
+          <strong>{{ review.user.username }}</strong>
+          <span class="text-warning">{{ '★' * review.rating }}{{ '☆' * (5 - review.rating) }}</span>
+        </div>
+        {% if review.review_text %}<p class="text-muted mb-0 mt-1">{{ review.review_text }}</p>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted">No reviews yet. Be the first to review!</p>
+    {% endif %}
+  </section>
+
+  {% if similar_movies %}
+  <section class="cv-row cv-row-static mb-5">
+    <h3 class="mb-3">Similar Movies</h3>
+    <div class="cv-row-scroll">
+      {% for m in similar_movies %}{{ movie_card(m) }}{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

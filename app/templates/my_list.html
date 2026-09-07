@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "partials/_movie_card.html" import movie_card %}
+{% block title %}My List · {{ brand_name }}{% endblock %}
+
+{% block content %}
+<div class="cv-page-container">
+  <h1 class="cv-page-title">My List</h1>
+
+  {% if movies %}
+  <div class="cv-grid">
+    {% for movie in movies %}{{ movie_card(movie) }}{% endfor %}
+  </div>
+  {% else %}
+  <div class="cv-empty-state">
+    <p>You haven't added any movies yet. Browse the catalog and tap "+ My List" on anything you like.</p>
+    <a href="{{ url_for('main.index') }}" class="btn cv-btn-primary mt-3">Browse Movies</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

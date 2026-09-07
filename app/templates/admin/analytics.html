@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Analytics · Admin · {{ brand_name }}{% endblock %}
+
+{% block content %}
+<div class="cv-page-container">
+  <h1 class="cv-page-title">Analytics</h1>
+
+  <div class="row g-4 mb-4">
+    <div class="col-lg-6">
+      <div class="cv-panel">
+        <h5 class="mb-3">New Registrations (last 30 days)</h5>
+        <canvas id="registrationsChart" height="220"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="cv-panel">
+        <h5 class="mb-3">Watch Sessions (last 30 days)</h5>
+        <canvas id="watchChart" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="cv-panel">
+    <h5 class="mb-3">Most Watched Movies</h5>
+    <table class="table table-dark table-borderless cv-table">
+      <thead><tr><th>Title</th><th>Views</th></tr></thead>
+      <tbody>
+      {% for m in most_watched %}
+        <tr><td>{{ m.title }}</td><td>{{ m.view_count }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+  const registrationsData = {{ registrations_by_day | tojson }};
+  const watchData = {{ watch_by_day | tojson }};
+
+  function buildChart(canvasId, data, label, color) {
+    new Chart(document.getElementById(canvasId), {
+      type: 'line',
+      data: {
+        labels: data.map(d => d.date),
+        datasets: [{
+          label: label,
+          data: data.map(d => d.count),
+          borderColor: color,
+          backgroundColor: color + '33',
+          tension: 0.3,
+          fill: true,
+        }]
+      },
+      options: {
+        plugins: { legend: { labels: { color: '#e5e5e5' } } },
+        scales: {
+          x: { ticks: { color: '#a0a0a0' }, grid: { color: '#2a2a2a' } },
+          y: { ticks: { color: '#a0a0a0' }, grid: { color: '#2a2a2a' }, beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  buildChart('registrationsChart', registrationsData, 'New Users', '#e50914');
+  buildChart('watchChart', watchData, 'Watch Sessions', '#0ea5e9');
+</script>
+{% endblock %}

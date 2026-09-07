@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Watching {{ movie.title }} · {{ brand_name }}{% endblock %}
+
+{% block content %}
+<div class="cv-watch-page">
+  <div class="cv-watch-topbar">
+    <a href="{{ url_for('movies.detail', movie_id=movie.id) }}" class="cv-watch-back">← Back to {{ movie.title }}</a>
+  </div>
+
+  <div class="cv-player-wrap">
+    {% if movie.video_url %}
+    <video id="cvPlayer" class="cv-player" controls preload="metadata"
+           data-movie-id="{{ movie.id }}"
+           data-resume-at="{{ resume_at }}"
+           data-media-type="{{ media_type }}"
+           poster="{{ movie.backdrop_url }}">
+      <source src="{{ stream_url }}" type="{{ media_type }}">
+      {% if movie.subtitle_url %}
+      <track kind="subtitles" src="{{ movie.subtitle_url }}" srclang="en" label="English">
+      {% endif %}
+      Your browser does not support the video tag.
+    </video>
+    {% else %}
+    <div class="cv-player-placeholder">
+      <p>No video source has been uploaded for this title yet.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="cv-watch-info">
+    <h2>{{ movie.title }}</h2>
+    <p class="text-muted">{{ movie.release_year }} • {{ movie.duration_display }} • {{ movie.age_rating }}</p>
+    {% if resume_at and resume_at > 5 %}
+    <p class="cv-resume-note">Resuming from {{ (resume_at // 60) }}:{{ '%02d' % (resume_at % 60) }}</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+<script src="{{ url_for('static', filename='js/player.js') }}"></script>
+{% endblock %}

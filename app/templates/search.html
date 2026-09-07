@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "partials/_movie_card.html" import movie_card %}
+{% block title %}Search{% if query %} · "{{ query }}"{% endif %} · {{ brand_name }}{% endblock %}
+
+{% block content %}
+<div class="cv-page-container">
+  <h1 class="cv-page-title">{% if query %}Results for "{{ query }}"{% else %}Search{% endif %}</h1>
+
+  <form method="get" class="cv-filter-bar mb-4">
+    <input type="text" name="q" class="form-control cv-input" placeholder="Search..." value="{{ query }}">
+    <select name="genre" class="form-select cv-input">
+      <option value="">All Genres</option>
+      {% for g in genres %}
+      <option value="{{ g }}" {% if filters.genre == g %}selected{% endif %}>{{ g }}</option>
+      {% endfor %}
+    </select>
+    <input type="number" name="year" class="form-control cv-input" placeholder="Year" value="{{ filters.year }}">
+    <select name="rating" class="form-select cv-input">
+      <option value="">Any Rating</option>
+      {% for r in [4,3,2,1] %}
+      <option value="{{ r }}" {% if filters.rating == r|string %}selected{% endif %}>{{ r }}+ Stars</option>
+      {% endfor %}
+    </select>
+    <input type="text" name="language" class="form-control cv-input" placeholder="Language" value="{{ filters.language }}">
+    <button type="submit" class="btn cv-btn-primary">Filter</button>
+  </form>
+
+  <p class="text-muted">{{ total }} result(s) found</p>
+
+  {% if movies %}
+  <div class="cv-grid">
+    {% for movie in movies %}{{ movie_card(movie) }}{% endfor %}
+  </div>
+
+  {% if total_pages > 1 %}
+  <nav class="cv-pagination">
+    {% for p in range(1, total_pages + 1) %}
+      <a href="{{ url_for('main.search', q=query, genre=filters.genre, year=filters.year, rating=filters.rating, language=filters.language, page=p) }}"
+         class="cv-page-link {% if p == page %}active{% endif %}">{{ p }}</a>
+    {% endfor %}
+  </nav>
+  {% endif %}
+
+  {% else %}
+  <div class="cv-empty-state">
+    <p>No movies matched your search. Try different keywords or filters.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

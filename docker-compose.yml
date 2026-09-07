@@ -1,0 +1,42 @@
+services:
+  web:
+    build: .
+    container_name: cinevault_web
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_ENV: production
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-prod}
+      DATABASE_URL: postgresql+psycopg2://cinevault:cinevault@db:5432/cinevault
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
+      UPLOAD_FOLDER: /app/media
+    volumes:
+      - media_data:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "python -c 'from app import create_app, db; app = create_app(\"production\"); ctx = app.app_context(); ctx.push(); db.create_all()' &&
+             gunicorn --bind 0.0.0.0:5000 --workers 3 --timeout 120 run:app"
+
+  db:
+    image: postgres:16-alpine
+    container_name: cinevault_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cinevault
+      POSTGRES_PASSWORD: cinevault
+      POSTGRES_DB: cinevault
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cinevault"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg_data:
+  media_data:

@@ -1,0 +1,39 @@
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Database
+*.db
+*.sqlite3
+instance/
+
+# Media uploads (keep the folder structure, ignore uploaded files)
+media/movies/*
+media/posters/*
+media/backdrops/*
+media/trailers/*
+media/subtitles/*
+!media/**/.gitkeep
+
+# Testing / tooling
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

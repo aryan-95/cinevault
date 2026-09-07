@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Sign Up · {{ brand_name }}{% endblock %}
+{% block content %}
+<div class="cv-auth-page">
+  <div class="cv-auth-card">
+    <h1 class="cv-auth-title">Create Account</h1>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-control cv-input" value="{{ username or '' }}" required autofocus>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control cv-input" value="{{ email or '' }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control cv-input" required minlength="8">
+      </div>
+      <div class="mb-4">
+        <label class="form-label">Confirm Password</label>
+        <input type="password" name="confirm_password" class="form-control cv-input" required minlength="8">
+      </div>
+      <button type="submit" class="btn cv-btn-primary w-100 btn-lg">Create Account</button>
+    </form>
+    <p class="cv-auth-footer">Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a></p>
+  </div>
+</div>
+{% endblock %}

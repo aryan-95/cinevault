@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Login · {{ brand_name }}{% endblock %}
+{% block content %}
+<div class="cv-auth-page">
+  <div class="cv-auth-card">
+    <h1 class="cv-auth-title">Sign In</h1>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="mb-3">
+        <label class="form-label">Email or Username</label>
+        <input type="text" name="identifier" class="form-control cv-input" required autofocus>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control cv-input" required>
+      </div>
+      <div class="form-check mb-4">
+        <input type="checkbox" name="remember" class="form-check-input" id="remember">
+        <label class="form-check-label" for="remember">Remember me</label>
+      </div>
+      <button type="submit" class="btn cv-btn-primary w-100 btn-lg">Sign In</button>
+    </form>
+    <p class="cv-auth-footer">New to {{ brand_name }}? <a href="{{ url_for('auth.register') }}">Sign up now</a></p>
+  </div>
+</div>
+{% endblock %}

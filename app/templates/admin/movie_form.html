@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if movie else 'Add' }} Movie · Admin · {{ brand_name }}{% endblock %}
+
+{% block content %}
+<div class="cv-page-container">
+  <h1 class="cv-page-title">{{ 'Edit Movie' if movie else 'Add New Movie' }}</h1>
+
+  <form method="post" enctype="multipart/form-data" class="cv-panel">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Title</label>
+        <input type="text" name="title" class="form-control cv-input" value="{{ movie.title if movie else '' }}" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Release Year</label>
+        <input type="number" name="release_year" class="form-control cv-input" value="{{ movie.release_year if movie else 2024 }}" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Duration (minutes)</label>
+        <input type="number" name="duration_minutes" class="form-control cv-input" value="{{ movie.duration_minutes if movie else 90 }}" required>
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control cv-input" rows="3">{{ movie.description if movie else '' }}</textarea>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Genre (comma separated)</label>
+        <input type="text" name="genre" class="form-control cv-input" value="{{ movie.genre if movie else '' }}" placeholder="Action,Sci-Fi">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Language</label>
+        <input type="text" name="language" class="form-control cv-input" value="{{ movie.language if movie else 'English' }}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Age Rating</label>
+        <input type="text" name="age_rating" class="form-control cv-input" value="{{ movie.age_rating if movie else 'PG-13' }}">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Cast</label>
+        <input type="text" name="cast" class="form-control cv-input" value="{{ movie.cast if movie else '' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Director</label>
+        <input type="text" name="director" class="form-control cv-input" value="{{ movie.director if movie else '' }}">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Poster Image</label>
+        <input type="file" name="poster_file" class="form-control cv-input" accept="image/*">
+        <input type="text" name="poster_url" class="form-control cv-input mt-2" placeholder="...or paste a poster URL" value="{{ movie.poster_url if movie else '' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Backdrop Image</label>
+        <input type="file" name="backdrop_file" class="form-control cv-input" accept="image/*">
+        <input type="text" name="backdrop_url" class="form-control cv-input mt-2" placeholder="...or paste a backdrop URL" value="{{ movie.backdrop_url if movie else '' }}">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Video File</label>
+        <input type="file" name="video_file" class="form-control cv-input" accept="video/*">
+        <input type="text" name="video_url" class="form-control cv-input mt-2" placeholder="...or paste a video URL" value="{{ movie.video_url if movie else '' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Trailer URL</label>
+        <input type="text" name="trailer_url" class="form-control cv-input" value="{{ movie.trailer_url if movie else '' }}">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Subtitles (.vtt/.srt)</label>
+        <input type="file" name="subtitle_file" class="form-control cv-input" accept=".vtt,.srt">
+      </div>
+
+      <div class="col-md-6 d-flex align-items-center gap-4">
+        <div class="form-check">
+          <input type="checkbox" name="is_trending" class="form-check-input" id="isTrending" {% if movie and movie.is_trending %}checked{% endif %}>
+          <label class="form-check-label" for="isTrending">Trending</label>
+        </div>
+        <div class="form-check">
+          <input type="checkbox" name="is_featured" class="form-check-input" id="isFeatured" {% if movie and movie.is_featured %}checked{% endif %}>
+          <label class="form-check-label" for="isFeatured">Featured (Hero)</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+      <button type="submit" class="btn cv-btn-primary">{{ 'Save Changes' if movie else 'Create Movie' }}</button>
+      <a href="{{ url_for('admin.movie_list') }}" class="btn cv-btn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% from "partials/_movie_card.html" import movie_card %}
+
+{% block title %}{{ brand_name }} · Stream Original Stories{% endblock %}
+
+{% block content %}
+
+{% if featured %}
+<section class="cv-hero" style="background-image: linear-gradient(180deg, rgba(10,10,15,0.2) 0%, rgba(10,10,15,0.95) 100%), url('{{ featured.backdrop_url or "https://placehold.co/1600x900/141414/e50914?text=" + featured.title }}');">
+  <div class="cv-hero-content">
+    <h1 class="cv-hero-title">{{ featured.title }}</h1>
+    <div class="cv-hero-tags">
+      <span class="cv-badge">{{ featured.age_rating }}</span>
+      <span>{{ featured.release_year }}</span>
+      <span class="cv-dot">•</span>
+      <span>{{ featured.duration_display }}</span>
+      <span class="cv-dot">•</span>
+      <span>★ {{ featured.average_rating }} ({{ featured.rating_count }})</span>
+      <span class="cv-dot">•</span>
+      <span>{{ featured.genre_list | join(', ') }}</span>
+    </div>
+    <p class="cv-hero-desc">{{ featured.description }}</p>
+    <div class="cv-hero-actions">
+      <a href="{{ url_for('movies.watch', movie_id=featured.id) }}" class="btn cv-btn-primary btn-lg">▶ Watch Now</a>
+      {% if current_user.is_authenticated %}
+      <form action="{{ url_for('movies.add_to_list', movie_id=featured.id) }}" method="post" class="d-inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn cv-btn-secondary btn-lg">+ My List</button>
+      </form>
+      {% else %}
+      <a href="{{ url_for('auth.login') }}" class="btn cv-btn-secondary btn-lg">+ My List</a>
+      {% endif %}
+      <a href="{{ url_for('movies.detail', movie_id=featured.id) }}" class="btn cv-btn-ghost btn-lg">More Info</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<div class="cv-rows-container">
+
+{% if continue_watching %}
+<section class="cv-row">
+  <h2 class="cv-row-title">Continue Watching</h2>
+  <div class="cv-row-scroll">
+    {% for movie, entry in continue_watching %}
+      {{ movie_card(movie, progress_pct=entry.completion_percentage) }}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if recommended %}
+<section class="cv-row">
+  <h2 class="cv-row-title">Recommended For You</h2>
+  <div class="cv-row-scroll">
+    {% for movie in recommended %}{{ movie_card(movie) }}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if trending %}
+<section class="cv-row">
+  <h2 class="cv-row-title">Trending Now</h2>
+  <div class="cv-row-scroll">
+    {% for movie in trending %}{{ movie_card(movie) }}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="cv-row">
+  <h2 class="cv-row-title">Popular Movies</h2>
+  <div class="cv-row-scroll">
+    {% for movie in popular %}{{ movie_card(movie) }}{% endfor %}
+  </div>
+</section>
+
+<section class="cv-row">
+  <h2 class="cv-row-title">Recently Added</h2>
+  <div class="cv-row-scroll">
+    {% for movie in recently_added %}{{ movie_card(movie) }}{% endfor %}
+  </div>
+</section>
+
+{% for genre_name, movies in genre_rows.items() %}
+  {% if movies %}
+  <section class="cv-row">
+    <h2 class="cv-row-title">{{ genre_name }}</h2>
+    <div class="cv-row-scroll">
+      {% for movie in movies %}{{ movie_card(movie) }}{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+{% endfor %}
+
+</div>
+{% endblock %}

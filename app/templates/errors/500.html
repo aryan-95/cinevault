@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Server Error · {{ brand_name }}{% endblock %}
+{% block content %}
+<div class="cv-error-page">
+  <h1 class="cv-error-code">500</h1>
+  <p class="cv-error-message">Something went wrong on our end. Please try again shortly.</p>
+  <a href="{{ url_for('main.index') }}" class="btn cv-btn-primary">Back to Home</a>
+</div>
+{% endblock %}

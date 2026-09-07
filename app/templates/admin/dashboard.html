@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard · {{ brand_name }}{% endblock %}
+
+{% block content %}
+<div class="cv-page-container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="cv-page-title mb-0">Admin Dashboard</h1>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('admin.movie_list') }}" class="btn cv-btn-secondary">Manage Movies</a>
+      <a href="{{ url_for('admin.user_list') }}" class="btn cv-btn-secondary">Manage Users</a>
+      <a href="{{ url_for('admin.analytics') }}" class="btn cv-btn-secondary">Analytics</a>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-5">
+    <div class="col-md-3"><div class="cv-stat-card"><div class="cv-stat-value">{{ total_users }}</div><div class="cv-stat-label">Total Users</div></div></div>
+    <div class="col-md-3"><div class="cv-stat-card"><div class="cv-stat-value">{{ active_users }}</div><div class="cv-stat-label">Active Users</div></div></div>
+    <div class="col-md-3"><div class="cv-stat-card"><div class="cv-stat-value">{{ total_movies }}</div><div class="cv-stat-label">Total Movies</div></div></div>
+    <div class="col-md-3"><div class="cv-stat-card"><div class="cv-stat-value">{{ total_watch_sessions }}</div><div class="cv-stat-label">Watch Sessions</div></div></div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="cv-panel">
+        <h5 class="mb-3">Most Watched Movies</h5>
+        <table class="table table-dark table-borderless cv-table">
+          <thead><tr><th>Title</th><th>Views</th></tr></thead>
+          <tbody>
+          {% for m in most_watched %}
+            <tr><td>{{ m.title }}</td><td>{{ m.view_count }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="cv-panel">
+        <h5 class="mb-3">Recently Added</h5>
+        <table class="table table-dark table-borderless cv-table">
+          <thead><tr><th>Title</th><th>Added</th></tr></thead>
+          <tbody>
+          {% for m in recently_added %}
+            <tr><td>{{ m.title }}</td><td>{{ m.created_at.strftime('%Y-%m-%d') }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
